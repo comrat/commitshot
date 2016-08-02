@@ -1,16 +1,15 @@
 /*
  * capturing from UVC cam
  * requires: libjpeg-dev
- * build: gcc -std=c99 capture.c -ljpeg -o capture
  */
 
-#include <stdint.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
 
 #include <fcntl.h>
+#include <sys/types.h>
 #include <sys/ioctl.h>
 #include <sys/mman.h>
 #include <asm/types.h>
@@ -19,43 +18,12 @@
 #include <sys/time.h>
 #include <sys/types.h>
 #include <unistd.h>
-
 #include <jpeglib.h>
 
-
-typedef struct {
-	uint8_t* start;
-	size_t length;
-} buffer_t;
-
-typedef struct {
-	int fd;
-	uint32_t width;
-	uint32_t height;
-	size_t buffer_count;
-	buffer_t* buffers;
-	buffer_t head;
-} camera_t;
+#include "capture.h"
 
 
-int minmax(int min, int v, int max)
-{ return (v < min) ? min : (max < v) ? max : v; }
-
-camera_t* camera_open(const char * device, uint32_t width, uint32_t height);
-uint8_t* yuyv2rgb(uint8_t* yuyv, uint32_t width, uint32_t height);
-void quit(const char* msg);
-void camera_init(camera_t* camera);
-void camera_start(camera_t* camera);
-void camera_stop(camera_t* camera);
-void camera_finish(camera_t* camera);
-void camera_close(camera_t* camera);
-void jpeg(FILE* dest, uint8_t* rgb, uint32_t width, uint32_t height, int quality);
-int xioctl(int fd, int request, void* arg);
-int camera_capture(camera_t* camera);
-int camera_frame(camera_t* camera, struct timeval timeout);
-
-
-int main()
+void capture_frame()
 {
 	camera_t* camera = camera_open("/dev/video0", 352, 288);
 	struct timeval timeout;
@@ -68,7 +36,7 @@ int main()
 	timeout.tv_sec = 1;
 	timeout.tv_usec = 0;
 
-	/* skip 5 frames for booting a cam */
+	// skip 5 frames for booting a cam
 	for (i = 0; i < 5; ++i) {
 		camera_frame(camera, timeout);
 	}
@@ -84,7 +52,6 @@ int main()
 	camera_stop(camera);
 	camera_finish(camera);
 	camera_close(camera);
-	return 0;
 }
 
 
@@ -318,3 +285,7 @@ uint8_t* yuyv2rgb(uint8_t* yuyv, uint32_t width, uint32_t height)
 	}
 	return rgb;
 }
+
+
+int minmax(int min, int v, int max)
+{ return (v < min) ? min : (max < v) ? max : v; }
