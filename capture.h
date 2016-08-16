@@ -17,8 +17,12 @@ typedef struct {
 	buffer_t head;
 } camera_t;
 
+const char* CAM_DEV = "/dev/video0";
+const int CAM_WIDTH = 352;
+const int CAM_HEIGHT = 288;
 
-camera_t* camera_open(const char * device, uint32_t width, uint32_t height);
+
+camera_t* camera_open(const char* device);
 uint8_t* yuyv2rgb(uint8_t* yuyv, uint32_t width, uint32_t height);
 void quit(const char* msg);
 void camera_init(camera_t* camera);

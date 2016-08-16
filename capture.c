@@ -23,9 +23,18 @@
 #include "capture.h"
 
 
+int check_camera()
+{
+	int fd = open(CAM_DEV, O_RDWR | O_NONBLOCK, 0);
+
+	close(fd);
+	return fd == -1 ? 0 : 1;
+}
+
+
 void capture_frame()
 {
-	camera_t* camera = camera_open("/dev/video0", 352, 288);
+	camera_t* camera = camera_open(CAM_DEV);
 	struct timeval timeout;
 	unsigned char* rgb;
 	FILE* out;
@@ -72,14 +81,17 @@ int xioctl(int fd, int request, void* arg)
 }
 
 
-camera_t* camera_open(const char * device, uint32_t width, uint32_t height)
+camera_t* camera_open(const char * device)
 {
 	int fd = open(device, O_RDWR | O_NONBLOCK, 0);
-	if (fd == -1) quit("open");
-	camera_t* camera = malloc(sizeof (camera_t));
+	camera_t* camera;
+	if (fd == -1)
+		quit("open");
+
+	camera = malloc(sizeof(camera_t));
 	camera->fd = fd;
-	camera->width = width;
-	camera->height = height;
+	camera->width = CAM_WIDTH;
+	camera->height = CAM_HEIGHT;
 	camera->buffer_count = 0;
 	camera->buffers = NULL;
 	camera->head.length = 0;
@@ -187,7 +199,8 @@ void camera_finish(camera_t* camera)
 
 void camera_close(camera_t* camera)
 {
-	if (close(camera->fd) == -1) quit("close");
+	if (close(camera->fd) == -1)
+		quit("close");
 	free(camera);
 }
 

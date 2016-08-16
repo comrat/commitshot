@@ -14,6 +14,11 @@ int main(void) {
 	pid_t pid, sid;
 	FILE *fp = NULL;
 
+	if (!check_camera()) {
+		printf("/dev/video0 not found\n");
+		return 0;
+	}
+
 	/* Fork off the parent process */
 	pid = fork();
 	if (pid < 0) {
@@ -36,8 +41,6 @@ int main(void) {
 		/* Log the failure */
 		exit(EXIT_FAILURE);
 	}
-
-
 
 	/* Change the current working directory */
 	if ((chdir("/")) < 0) {
