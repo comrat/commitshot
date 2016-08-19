@@ -6,7 +6,6 @@
 #include <unistd.h>
 #include <syslog.h>
 #include <string.h>
-#include "capture.h"
 
 
 int main(void) {
