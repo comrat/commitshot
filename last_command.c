@@ -13,11 +13,20 @@ int main(void)
 	int len = strlen(uname) + 21;
 	char history_file[len];
 	FILE *fp;
+	long file_size;
 
 	strcpy(history_file, "/home/");
 	strcat(history_file, uname);
 	strcat(history_file, "/.bash_history\0");
+
 	fp = fopen(history_file, "r");
+
+	fseek(fp, 0, SEEK_END);
+	file_size = ftell(fp);
+	printf("Size %lu\n", file_size);
+	fseek(fp, 0, 0);
+
+
 	if (!fp) {
 		printf("Failed to open history");
 		return -1;
