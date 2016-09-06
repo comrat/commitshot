@@ -10,12 +10,18 @@
 
 int main(void) {
 	/* Our process ID and Session ID */
-	pid_t pid, sid;
+	pid_t pid;
+	pid_t sid;
 	FILE *fp = NULL;
 
 	if (!check_camera()) {
 		printf("/dev/video0 not found\n");
-		return 0;
+		exit(EXIT_FAILURE);
+	}
+
+	if (!check_history_file()) {
+		printf(".bash_history not found\n");
+		exit(EXIT_FAILURE);
 	}
 
 	/* Fork off the parent process */

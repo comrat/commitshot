@@ -10,7 +10,9 @@ int main(void)
 	char* line = NULL;
 	char* commit = NULL;
 	ssize_t read;
-	int len = strlen(uname) + 21;
+	char* home = "/home/";
+	char* file_name = "/.bash_history\0";
+	size_t len = strlen(uname) + strlen(home) + strlen(file_name);
 	char history_file[len];
 	FILE *fp;
 	long file_size;

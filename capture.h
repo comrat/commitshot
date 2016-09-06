@@ -36,5 +36,6 @@ int xioctl(int fd, int request, void* arg);
 int camera_capture(camera_t* camera);
 int camera_frame(camera_t* camera, struct timeval timeout);
 int minmax(int min, int v, int max);
+int check_camera();
 
 #endif

@@ -11,11 +11,14 @@ capture.o: capture.c
 daemon.o: daemon.c
 		gcc -c daemon.c -o daemon.o
 
-commitshot: daemon.o capture.o
-		gcc -o commitshot daemon.o capture.o -ljpeg
+history.o: history.c
+		gcc -c history.c -o history.o
+
+commitshot: daemon.o capture.o history.o
+		gcc -o commitshot daemon.o capture.o history.o -ljpeg
 
 install:
 		install ./commitshot /usr/local/bin
 
 uninstall:
-		rm -rf /usr/local/bin/hello
+		rm -rf /usr/local/bin/commitshot
