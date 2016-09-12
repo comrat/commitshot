@@ -58,18 +58,14 @@ int main(void) {
 	close(STDOUT_FILENO);
 	close(STDERR_FILENO);
 
-	/* Daemon-specific initialization goes here */
-
-	/* The Big Loop */
-	fp = fopen ("Log.txt", "w+");
-	while (1) {
-		/* Do some task here ... */
-
-		sleep(10); /* wait 30 seconds */
+	fp = fopen("Log.txt", "w+");
+	while(1) {
+		sleep(30);
 		fprintf(fp, "Logging info...\n");
 		fflush(fp);
 
-		capture_frame();
+		if (check_size_changed() && check_last_command())
+			capture_frame();
 	}
 	fclose(fp);
 	exit(EXIT_SUCCESS);
