@@ -1,26 +1,68 @@
-/*
- * capturing from UVC cam
- * requires: libjpeg-dev
- */
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
+#include <time.h>
 
 #include <fcntl.h>
 #include <sys/types.h>
 #include <sys/ioctl.h>
 #include <sys/mman.h>
+#include <sys/stat.h>
+#include <sys/time.h>
 #include <asm/types.h>
 #include <linux/videodev2.h>
 
-#include <sys/time.h>
-#include <sys/types.h>
 #include <unistd.h>
 #include <jpeglib.h>
 
-#include "capture.h"
+#include "commitshot.h"
+
+
+
+int main(int argc, char** argv)
+{
+	struct stat st = {0};
+	if (stat("/tmp/commitshot", &st) == -1)
+		mkdir("/tmp/commitshot", 0700);
+
+	camera_t* camera = camera_open(CAM_DEV);
+	struct timeval timeout;
+	unsigned char* rgb;
+	FILE* out;
+	int i;
+	time_t rawtime;
+	char buffer[255];
+	time (&rawtime);
+	sprintf(buffer, "%s.jpg", ctime(&rawtime));
+
+	camera_init(camera);
+	camera_start(camera);
+	timeout.tv_sec = 1;
+	timeout.tv_usec = 0;
+
+	// skip 5 frames for booting a cam
+	for (i = 0; i < 5; ++i)
+		camera_frame(camera, timeout);
+
+	camera_frame(camera, timeout);
+	rgb = yuyv2rgb(camera->head.start, camera->width, camera->height);
+
+	rawtime;
+	buffer[255];
+	time (&rawtime);
+	sprintf(buffer, "/tmp/commitshot/%s.jpg", ctime(&rawtime));
+
+	out = fopen(buffer, "w");
+	jpeg(out, rgb, camera->width, camera->height, 100);
+	fclose(out);
+	free(rgb);
+
+	camera_stop(camera);
+	camera_finish(camera);
+	camera_close(camera);
+	return 0;
+}
 
 
 int check_camera()
@@ -29,38 +71,6 @@ int check_camera()
 
 	close(fd);
 	return fd == -1 ? 0 : 1;
-}
-
-
-void capture_frame()
-{
-	camera_t* camera = camera_open(CAM_DEV);
-	struct timeval timeout;
-	unsigned char* rgb;
-	FILE* out;
-	int i;
-
-	camera_init(camera);
-	camera_start(camera);
-	timeout.tv_sec = 1;
-	timeout.tv_usec = 0;
-
-	// skip 5 frames for booting a cam
-	for (i = 0; i < 5; ++i) {
-		camera_frame(camera, timeout);
-	}
-
-	camera_frame(camera, timeout);
-
-	rgb = yuyv2rgb(camera->head.start, camera->width, camera->height);
-	out = fopen("result.jpg", "w");
-	jpeg(out, rgb, camera->width, camera->height, 100);
-	fclose(out);
-	free(rgb);
-
-	camera_stop(camera);
-	camera_finish(camera);
-	camera_close(camera);
 }
 
 

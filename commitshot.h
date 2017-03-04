@@ -1,6 +1,7 @@
 #ifndef CAPTURE_H
 #define CAPTURE_H
 
+#include <stdio.h>
 #include <stdint.h>
 
 typedef struct {
