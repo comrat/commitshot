@@ -19,8 +19,8 @@ typedef struct {
 } camera_t;
 
 const char* CAM_DEV = "/dev/video0";
-const int CAM_WIDTH = 352;
-const int CAM_HEIGHT = 288;
+const int CAM_WIDTH = 640;
+const int CAM_HEIGHT = 480;
 
 
 camera_t* camera_open(const char* device);
