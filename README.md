@@ -1,14 +1,15 @@
 # CommitShot
 This program takes shot from your webcam.
-You can use it for captureing photo during simple
-operations 'git commit' for example.
-If you want to do this just add alias to yours .bashrc file:
-```bash
-alias gitcap='commitshot;git commit'
-```
+It creates alias for `git commit` command named `commitshot` which takes a picture when you commit something with `git`
 
 # Install
+Run this command to build binary file and create alias for
 ```bash
-make
-make install
+source install.sh
+```
+
+# Usage
+Use it like `git commit`:
+```bash
+commitshot -m 'Regular commit message'
 ```
