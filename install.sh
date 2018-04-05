@@ -8,5 +8,9 @@ fi
 
 make clean
 make all
-echo 'commitshot installed'
-alias gitshot='commitshot && git commit'
+if [[ $? == 0 ]]; then
+	echo 'commitshot build successfully'
+	alias commitshot='commitshot && git commit'
+else
+	echo "Failed to build commitshot"
+fi;

@@ -1,15 +1,15 @@
 .PHONY: all clean install uninstall
 
-all: commitshot
+all: camcap
 
 clean:
-	rm -rf commitshot *.o
+	rm -rf camcap *.o
 
-commitshot:
-	gcc commitshot.c -o commitshot -ljpeg
+camcap:
+	gcc commitshot.c -o camcap -ljpeg
 
 install:
-	install ./commitshot /usr/local/bin
+	install ./camcap /usr/local/bin
 
 uninstall:
 	rm -rf /usr/local/bin/commitshot
